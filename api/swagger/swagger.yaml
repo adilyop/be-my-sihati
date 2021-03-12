@@ -1,0 +1,144 @@
+---
+swagger: '2.0'
+info:
+  title: rxcouncile
+  description: rxcouncile API Documentation
+  version: 1.0.0
+host: 17.0.0.1:3000
+basePath: "/"
+schemes:
+- http
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  "/patient":
+    get:
+      tags: "test"
+      summary: get patient
+      description: get all patients
+      responses:
+        '200':
+          description: all patients
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/Patient"
+        default:
+          description: Unexpected error1
+    post:
+      summary: get patient
+      description: get all patients
+      responses:
+        '200':
+          description: all patients
+          schema:
+            type: array
+            items:
+              "$ref": "#/definitions/Patient"
+        default:
+          description: Unexpected error1
+definitions:
+  Patient:
+    type: object
+    properties:
+      first_name:
+        type: string
+        description: Patient first name.
+      last_name:
+        type: string
+        description: Patient last name
+      phone_number:
+        type: string
+        description: Patient phone number.
+      ltc_id:
+        type: string
+        description: ltc id.
+      email_address:
+        type: string
+        description: Patient email address
+  Pharmacist:
+    type: object
+    properties:
+      first_name:
+        type: string
+        description: Pharmacist first name.
+      last_name:
+        type: string
+        description: Pharmacist last name
+      phone_number:
+        type: string
+        description: Pharmacist phone number.
+      email_address:
+        type: string
+        description: Pharmacist email address.
+  Discharge:
+    type: object
+    properties:
+      first_name:
+        type: string
+        description: Patient first name.
+      last_name:
+        type: string
+        description: Patient last name
+      facility_name:
+        type: string
+        description: facility name.
+      scheduled_by:
+        type: string
+        description: scheduled_by
+      date:
+        type: string
+        description: date
+      count_down:
+        type: string
+        description: count_down
+      status:
+        type: string
+        description: status
+  Queue:
+    type: object
+    properties:
+      first_name:
+        type: string
+        description: Patient first name.
+      last_name:
+        type: string
+        description: Patient last name
+      point_click_care_number:
+        type: string
+        description: point click care number.
+      social_security_number:
+        type: string
+        description: social security number.
+  LongTermCareFacility:
+    type: object
+    properties:
+      facility_name:
+        type: string
+        description: facility_name.
+      contact_first_name:
+        type: string
+        description: contact_first_name
+      contact_last_name:
+        type: string
+        description: contact_last_name.
+      facility_phone_number:
+        type: string
+        description: facility_phone_number.
+      email_address:
+        type: string
+        description: email_address
+      street_address:
+        type: string
+        description: street_address
+      city_address:
+        type: string
+        description: city_address
+      state_address:
+        type: string
+        description: state_address
+      zip_address:
+        type: string
+        description: zip_address
