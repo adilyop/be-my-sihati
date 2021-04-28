@@ -30,8 +30,9 @@ function getBenificiaireByFilter(filter, pagination) {
     .exec();
 }
 
-function updateBenificiaire(filter, body) {
+function updateBenificiaire(id, body) {
   const update = { $set: body };
+  const filter = { _id: id };
   return Benificiaires.findOneAndUpdate(filter, update)
     .exec();
 }

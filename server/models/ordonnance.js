@@ -3,28 +3,19 @@
 import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
-const benificiairesSchema = new Schema({
-  patient: { type: Schema.Types.ObjectId, refPath: 'benificiaires' },
-  first_name: String,
-  last_name: String,
-  phone_number: String,
-  birth_date: String,
-  family_link: String,
-  sex: String,
-  adresse: String,
-  commune: String,
-  departement: String,
-  region: String,
-  country: String,
-  fax: String,
-  CIN: String,
+const ordonnancesSchema = new Schema({
+  patient: { type: Schema.Types.ObjectId, refPath: 'patients' },
+  benificiaire: { type: Schema.Types.ObjectId, refPath: 'benificiaires' },
+  consultation: { type: Schema.Types.ObjectId, refPath: 'consultations' },
+  ordonnance_name: String,
+  date_rdv: String,
+  price: String,
+  comment_medecin: String,
   comment: String,
-  cell_phone: String,
-  email_address: String,
-  ssn: String,
   discharge_status: { type: String, default: 'NotScheduled', enum: ['Scheduled', 'NotScheduled'] },
   patient_number: Number,
   deleted: { type: Boolean, default: false },
-}, { collection: 'benificiaires' });
+  attachements: [{ type: Schema.Types.ObjectId, refPath: 'files' }],
+}, { collection: 'ordonnances' });
 
-export default mongoose.model('benificiaires', benificiairesSchema);
+export default mongoose.model('ordonnances', ordonnancesSchema);

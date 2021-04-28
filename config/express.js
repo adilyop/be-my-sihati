@@ -45,7 +45,7 @@ const debug = require('debug')('mysehhatiapi:index');
 mongoose.Promise = Promise;
 
 // connect to mongo db
-const mongoUri = `localhost:27017/Limouna`;
+const mongoUri = `mongodb://localhost:27017/Limouna`;
 mongoose.connect(mongoUri, { server: { socketOptions: { keepAlive: 1 } } });
 mongoose.connection.on('error', () => {
   throw new Error(`unable to connect to database: ${mongoUri}`);
@@ -80,7 +80,11 @@ import patientsRoutes from '../server/routes/patientsRoutes.js';
 // import doctorsRoutes from '../server/routes/doctorsRoutes.js';
 import usersRoutes from '../server/routes/usersRoutes.js';
 import pharmacistsRoutes from '../server/routes/pharmacistsRoutes.js';
+import medecinsRoutes from '../server/routes/medecinsRoutes.js';
 import benificiairesRoutes from '../server/routes/benificiairesRoutes.js';
+import consultationsRoutes from '../server/routes/consultationsRoutes.js';
+import ordonnancesRoutes from '../server/routes/ordonancesRoutes.js';
+import analysesRoutes from '../server/routes/analysesRoutes.js';
 
 app.use(logger('dev'));
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -100,6 +104,7 @@ app.post('/login', passport.initialize(), passport.authenticate(
     scope: []
   }), serializeClient, generateToken, respond);
 
+  app.use('/medecins', medecinsRoutes);
   app.use('/patients',checkPatientsPermission, patientsRoutes);
   app.use('/pharmacists', pharmacistsRoutes);
   // app.use('/doctors', doctorsRoutes);
@@ -112,7 +117,9 @@ app.post('/refresh',
 app.post('/sign-up', signUp);
 app.use(verifyToken);
 app.use('/benificiares', checkPatientsPermission, benificiairesRoutes);
-// app.use('/patients', checkPatientsPermission, patientsRoutes);
+app.use('/consultation', checkPatientsPermission, consultationsRoutes);
+app.use('/ordonnances', checkPatientsPermission, ordonnancesRoutes);
+app.use('/analyses', checkPatientsPermission, analysesRoutes);
 app.use(formatOutput);
 
 // catch 404 and forward to error handler

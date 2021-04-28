@@ -27,8 +27,8 @@ const tokenTime = 120 * 60;
 function generateToken(req, res, next) {
   const json = {
     _id: req.user._id,
-    kind: req.user.user_type.kind,
-    patient: req.user.user_type.item._id
+    kind: req.user.kind,
+    item: req.user.item._id
   };
   // eslint-disable-next-line  no-param-reassign
   req.token = jwt.sign({ user: json }, secretToken, { expiresIn: tokenTime });
@@ -40,8 +40,9 @@ function checkRefreshToken(req, res, next) {
     const result = getClientByFilter({ refreshToken: body.refreshToken });
     return result.then((clients) => {
       if (clients.length !== 0) {
+
         const client = clients[0];
-        req.user = client.user.item;
+        req.user = client.user;
         return next();
       }
       return res.status(401).send({ error: 'this refresh token is invalid' });
@@ -51,10 +52,12 @@ function checkRefreshToken(req, res, next) {
 }
 function serializeClient(req, res, next) {
   const refreshToken = uuid.v4();
+  req.user = req.user.user_type;
+  console.log('req.user serializeClient ', req.user)
   const client = {
     user: {
-      kind: req.user.user_type.kind,
-      item: req.user.user_type.item._id
+      kind: req.user.kind,
+      item: req.user.item._id
     },
     refreshToken,
   };
@@ -75,10 +78,11 @@ function respondRefresh(req, res) {
   });
 }
 function respond(req, res) {
+  console.log('req.user respond  ', req.user)
   res.status(200).send({
     _id: req.user._id,
     last_login: req.user.last_login,
-    user_type: req.user.user_type,
+    user_type: req.user,
     token: req.token,
     refreshToken: req.refreshToken,
     expiresIn: tokenTime,
@@ -120,13 +124,14 @@ function handleTokenError(error) {
   return data;
 }
 function handleTokenSuccess(decoded, callback) {
-  const userID = decoded.user._id;
+  const userID = decoded.user.item;
+  const itemID = decoded.user.item;
+  const itemType = decoded.user.kind;
   let func;
   getUser(userID)
     .then((user) => {
-      console.log('user ', user.user_type.item._id)
-      const itemID = user.user_type.item._id;
-      const itemType = user.user_type.kind;
+      // const itemID = user.item._id;
+      // const itemType = user.kind;
       switch (itemType) {
         case 'patients':
           func = getPatient;
@@ -227,7 +232,6 @@ function checkSubFacilitiesPermission(req, res, next) {
   }
 }
 function signUp(req, res, next) {
-  console.log('1')
   const data = req.body;
   const filter = {
     _id: data._id
@@ -235,14 +239,10 @@ function signUp(req, res, next) {
   const body = {
     password: data.password
   };
-  console.log('12')
   getUserByFilter(filter, body)
     .then((users) => {
-      console.log('13 ', users)
       const user = users[0];
-      console.log('13 ', user)
       const userID = user._id;
-      console.log('13 ', userID)
       updateUser(userID, body)
         .then((userResult) => {
           res.result = userResult;
@@ -252,7 +252,6 @@ function signUp(req, res, next) {
           next(500);
         });
     }, (err) => {
-      console.log('14')
       res.error = err;
       next(500);
     });
