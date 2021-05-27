@@ -1,7 +1,7 @@
 /**
  * Created by adil on 18/08/17.
  */
-import { Benificiaires } from '../models/index.js';
+import { Benificiaires, Consultations, Analyses, Radios } from '../models/index.js';
 
 function addBenificiaire(data) {
   const benificiaire = new Benificiaires(data);
@@ -13,8 +13,25 @@ function addBenificiaire(data) {
 
 function getBenificiaire(_id, patient) {
   const filter = { _id, patient };
-  console.log(' filter ', filter)
   return Benificiaires.find(filter);
+}
+function getNotifications(benificiaire, patient) {
+  const filter = { patient, benificiaire, consultation_status: 'Later' };
+  const filterAnalyse = { patient, benificiaire, analyse_status: 'Later' };
+  const filterRadio = { patient, benificiaire, radio_status: 'Later' };
+  console.log(' filter ', filter)
+  return Consultations.find(filter).then((consultations) => {
+    return Analyses.find(filterAnalyse).then((analyses) => {
+      return Radios.find(filterRadio).then((radios) => {
+        const result = {
+          countConsultation: consultations.length,
+          countAnalyse: analyses.length,
+          countRadio: radios.length,
+        };
+        return result;
+      });
+    });
+  });
 }
 
 function getBenificiaireByFilter(filter, pagination) {
@@ -47,5 +64,6 @@ export {
   getBenificiaire,
   getBenificiaireByFilter,
   updateBenificiaire,
-  deleteBenificiaire
+  deleteBenificiaire,
+  getNotifications
 };

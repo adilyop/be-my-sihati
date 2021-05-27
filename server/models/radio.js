@@ -3,11 +3,11 @@
 import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
-const analysesSchema = new Schema({
+const radiosSchema = new Schema({
   patient: { type: Schema.Types.ObjectId, refPath: 'patients' },
   ordonnance: { type: Schema.Types.ObjectId, refPath: 'ordonnances' },
   benificiaire: { type: Schema.Types.ObjectId, refPath: 'benificiaires' },
-  analyse_name: String,
+  radio_name: String,
   laboratory: String,
   date_prevu: String,
   date_rdv: String,
@@ -15,10 +15,11 @@ const analysesSchema = new Schema({
   interpretation_medecin: String,
   interpretation_labo: String,
   comment: String,
-  results: Object,
+  result_interpretation: String,
+  result_conclusion: String,
   deleted: { type: Boolean, default: false },
-  analyse_status: { type: String, default: 'Later', enum: ['Done', 'Later', 'InProgress'] },
+  radio_status: { type: String, default: 'Later', enum: ['Done', 'Later', 'InProgress'] },
   attachements: [{ type: Schema.Types.ObjectId, refPath: 'files' }],
-}, { collection: 'analyses' });
+}, { collection: 'radios' });
 
-export default mongoose.model('analyses', analysesSchema);
+export default mongoose.model('radios', radiosSchema);

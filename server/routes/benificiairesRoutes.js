@@ -5,7 +5,8 @@ import {
   getBenificiaire,
   addBenificiaire,
   updateBenificiaire,
-  deleteBenificiaire
+  deleteBenificiaire,
+  getNotifications
 } from '../controllers/benificiairesController.js';
 import mongoose from 'mongoose';
 
@@ -20,6 +21,12 @@ router.get('/:id', (req, res) => {
   const _id = ObjectId(req.params.id);
   const patientId = ObjectId(req.user._id);
   getBenificiaire(_id, patientId)
+    .then(response => res.send(response), error => res.send(error));
+});
+router.get('/:id/notifications', (req, res) => {
+  const _id = ObjectId(req.params.id);
+  const patientId = ObjectId(req.user._id);
+  getNotifications(_id, patientId)
     .then(response => res.send(response), error => res.send(error));
 });
 router.post('/', (req, res) => {

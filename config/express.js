@@ -85,6 +85,7 @@ import benificiairesRoutes from '../server/routes/benificiairesRoutes.js';
 import consultationsRoutes from '../server/routes/consultationsRoutes.js';
 import ordonnancesRoutes from '../server/routes/ordonancesRoutes.js';
 import analysesRoutes from '../server/routes/analysesRoutes.js';
+import radiosRoutes from '../server/routes/radiosRoutes.js';
 
 app.use(logger('dev'));
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -120,6 +121,7 @@ app.use('/benificiares', checkPatientsPermission, benificiairesRoutes);
 app.use('/consultation', checkPatientsPermission, consultationsRoutes);
 app.use('/ordonnances', checkPatientsPermission, ordonnancesRoutes);
 app.use('/analyses', checkPatientsPermission, analysesRoutes);
+app.use('/radios', checkPatientsPermission, radiosRoutes);
 app.use(formatOutput);
 
 // catch 404 and forward to error handler
