@@ -19,6 +19,10 @@ function getConsultationByFilter(patient, benificiaire) {
   const filter = { patient, benificiaire };
   return Consultations.find(filter)
     .populate({
+      path: 'attachements',
+      model: 'files',
+    })
+    .populate({
       path: 'medecin',
       select: 'id speciality first_name last_name phone_number',
       model: 'medecins'

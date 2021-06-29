@@ -17,6 +17,7 @@ const consultationsSchema = new Schema({
   price: String,
   commentaire: String,
   commentaire_medecin: String,
+  attachements: [{ type: Schema.Types.ObjectId, refPath: 'files' }],
   discharge_status: { type: String, default: 'NotScheduled', enum: ['Scheduled', 'NotScheduled'] },
   deleted: { type: Boolean, default: false },
 }, { collection: 'consultations' });

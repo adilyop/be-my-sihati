@@ -11,6 +11,7 @@ const analysesSchema = new Schema({
   laboratory: String,
   date_prevu: String,
   date_rdv: String,
+  date_prise_rdv: { type: Date, default: new Date() },
   price: String,
   interpretation_medecin: String,
   interpretation_labo: String,
