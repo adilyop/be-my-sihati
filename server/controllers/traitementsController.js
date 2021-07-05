@@ -22,6 +22,7 @@ function getTraitementByFilter(patient, benificiaire) {
   // })
   .populate({
     path: 'attachements',
+    select: 'id name path',
     model: 'files',
   })
   .populate({

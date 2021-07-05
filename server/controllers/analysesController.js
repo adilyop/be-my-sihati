@@ -25,6 +25,7 @@ function getAnalyseByFilter(patient, benificiaire) {
   // })
   .populate({
     path: 'attachements',
+    select: 'id name path',
     model: 'files',
   })
   .populate({

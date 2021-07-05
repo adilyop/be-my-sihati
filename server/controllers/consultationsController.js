@@ -20,6 +20,7 @@ function getConsultationByFilter(patient, benificiaire) {
   return Consultations.find(filter)
     .populate({
       path: 'attachements',
+      select: 'id name path',
       model: 'files',
     })
     .populate({
