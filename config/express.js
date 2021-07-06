@@ -14,6 +14,7 @@ import bodyParser from 'body-parser';
 import http from 'http';
 import socketio from 'socket.io';
 import util from 'util';
+import cors from 'cors';
 // middle wares
 // todo: merge the two authenticate middle wares
 import {
@@ -59,6 +60,7 @@ if (true) {
 
 // server initialization
 const app = express();
+app.use(cors());
 // load services
 // eslint-disable-next-line global-require
 
@@ -106,9 +108,9 @@ app.post('/login', passport.initialize(), passport.authenticate(
     scope: []
   }), serializeClient, generateToken, respond);
 
-  app.use('/medecins', medecinsRoutes);
-  app.use('/patients',checkPatientsPermission, patientsRoutes);
-  app.use('/pharmacists', pharmacistsRoutes);
+app.use('/medecins', medecinsRoutes);
+app.use('/patients',checkPatientsPermission, patientsRoutes);
+app.use('/pharmacists', pharmacistsRoutes);
   // app.use('/doctors', doctorsRoutes);
 app.use('/users', usersRoutes);
 app.post('/refresh',
