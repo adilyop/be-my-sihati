@@ -17,7 +17,7 @@ function getOrdonnance(_id, patient) {
 }
 
 function getOrdonnanceByFilter(patient, benificiaire) {
-  const filter = { patient, benificiaire };
+  const filter = { patient, benificiaire, deleted: false };
   return Ordonnances.find(filter)
   // .populate({
   //   path: 'consultation',

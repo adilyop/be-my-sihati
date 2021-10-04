@@ -16,21 +16,25 @@ function getBenificiaire(_id, patient) {
   return Benificiaires.find(filter);
 }
 function getNotifications(benificiaire, patient) {
-  const filter = { patient, benificiaire, consultation_status: 'Later' };
-  const filterAnalyse = { patient, benificiaire, analyse_status: 'Later' };
-  const filterRadio = { patient, benificiaire, radio_status: 'Later' };
-  const filterTraitement = { patient, benificiaire, traitement_status: 'Later' };
+  const filter = { patient, benificiaire, consultation_status: 'Later', deleted: false };
+  const filterAnalyse = { patient, benificiaire, analyse_status: 'Later', deleted: false };
+  const filterRadio = { patient, benificiaire, radio_status: 'Later', deleted: false };
+  const filterTraitement = { patient, benificiaire, traitement_status: 'Later', deleted: false };
+  const filterTraitementInProgree = { patient, benificiaire, traitement_status: 'InProgress', deleted: false };
   return Consultations.find(filter).then((consultations) => {
     return Analyses.find(filterAnalyse).then((analyses) => {
       return Radios.find(filterRadio).then((radios) => {
         return Traitements.find(filterTraitement).then((traitement) => {
-          const result = {
-            countConsultation: consultations.length,
-            countAnalyse: analyses.length,
-            countRadio: radios.length,
-            countTraitement: traitement.length,
-          };
-          return result;
+          return Traitements.find(filterTraitementInProgree).then((traitementInProgress) => {
+            const result = {
+              countConsultation: consultations.length,
+              countAnalyse: analyses.length,
+              countRadio: radios.length,
+              countTraitement: traitement.length,
+              countTraitementInProgress: traitementInProgress.length,
+            };
+            return result;
+          });
         });
       });
     });
@@ -58,7 +62,9 @@ function updateBenificiaire(id, body) {
 }
 
 function deleteBenificiaire(id) {
-  return Benificiaires.findByIdAndRemove(id)
+  const update = { $set: { deleted: true } };
+  const filter = { _id: id };
+  return Benificiaires.findOneAndUpdate(filter, update)
     .exec();
 }
 

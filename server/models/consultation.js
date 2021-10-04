@@ -13,6 +13,7 @@ const consultationsSchema = new Schema({
   date_consultation: String,
   date_prise_rdv: { type: Date, default: new Date() },
   date_rdv: String,
+  time_rdv: String,
   date_prevu: String,
   price: String,
   commentaire: String,

@@ -14,7 +14,7 @@ function getTraitement(_id, patient) {
 }
 
 function getTraitementByFilter(patient, benificiaire) {
-  const filter = { patient, benificiaire };
+  const filter = { patient, benificiaire, deleted: false };
   return Traitements.find(filter)
   // .populate({
   //   path: 'consultation',

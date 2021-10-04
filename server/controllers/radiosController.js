@@ -17,7 +17,7 @@ function getRadio(_id, patient) {
 }
 
 function getRadioByFilter(patient, benificiaire) {
-  const filter = { patient, benificiaire };
+  const filter = { patient, benificiaire, deleted: false };
   return Radios.find(filter)
   // .populate({
   //   path: 'consultation',

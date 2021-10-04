@@ -25,6 +25,7 @@ const traitementsSchema = new Schema({
   start_date: String,
   end_date: String,
   traitement_duration: String,
+  rest_duration: String,
   subTraitments: [subTraitementSchema],
   date_prise_rdv: { type: Date, default: new Date() },
   comment: String,
@@ -32,5 +33,6 @@ const traitementsSchema = new Schema({
   interpretation_dr: String,
   traitement_status: { type: String, default: 'Later', enum: ['Done', 'Later', 'InProgress'] },
   attachements: [{ type: Schema.Types.ObjectId, refPath: 'files' }],
+  deleted: { type: Boolean, default: false },
 }, { collection: 'traitements' });
 export default mongoose.model('traitements', traitementsSchema);

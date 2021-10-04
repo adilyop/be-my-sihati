@@ -20,7 +20,6 @@ router.get('/:id', (req, res) => {
     .then(response => res.send(response), error => res.send(error));
 });
 router.post('/', (req, res) => {
-  console.log('req.body  ', req.body)
   const user = req.body;
   if ('_id' in user) {
     updateUser(user._id, user)

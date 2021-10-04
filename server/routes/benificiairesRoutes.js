@@ -14,7 +14,7 @@ const ObjectId = mongoose.Types.ObjectId;
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  getBenificiaireByFilter({ patient: req.user._id }, {})
+  getBenificiaireByFilter({ patient: req.user._id, deleted: false }, {})
     .then(response => res.send(response), error => res.send(error));
 });
 router.get('/:id', (req, res) => {
