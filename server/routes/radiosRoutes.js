@@ -13,6 +13,27 @@ import {
 } from '../controllers/filesController.js';
 import mongoose from 'mongoose';
 import fs from 'fs';
+import multer from 'multer';
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const benificiaire = req.params.id;
+    if (!fs.existsSync('../patient')) {
+      fs.mkdirSync('../patient');
+    }
+    if (!fs.existsSync('../patient/' + benificiaire)) {
+      fs.mkdirSync('../patient/' + benificiaire);
+    }
+    if (!fs.existsSync('../patient/' + benificiaire + '/radio')) {
+      fs.mkdirSync('../patient/' + benificiaire + '/radio');
+    }
+    cb(null, '../patient/' + benificiaire + '/radio/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+const upload = multer({ storage: storage });
 
 const ObjectId = mongoose.Types.ObjectId;
 const router = express.Router();
@@ -43,34 +64,19 @@ router.post('/benif/:id', (req, res) => {
       .then(response => res.send(response), error => res.send(error));
   }
 });
-router.post('/:radioId/benif/:id/upload/:name', (request, res) => {
+router.post('/:radioId/benif/:id/upload/:name', upload.single('file'), (request, res) => {
   const benificiaire = request.params.id;
   const name = request.params.name;
   const radioId = request.params.radioId;
-  const chunks = [];
-  if (!fs.existsSync('../patient')) {
-    fs.mkdirSync('../patient');
-  }
-  if (!fs.existsSync('../patient/' + benificiaire)) {
-    fs.mkdirSync('../patient/' + benificiaire);
-  }
-  if (!fs.existsSync('../patient/' + benificiaire + '/radio')) {
-    fs.mkdirSync('../patient/' + benificiaire + '/radio');
-  }
-  request.on('data', chunk => chunks.push(chunk));
-  request.on('end', (a, z, e) => {
-    const data = Buffer.concat(chunks);
-    fs.writeFile(`../patient/${benificiaire}/radio/${name}`, data, 'binary', function(err){});
-  })
   const attachement = {
     name,
+    mimeType: request.file.mimetype,
     path: `patient/${benificiaire}/radio/${name}`,
   };
   addFile(attachement).then((fileResult) => {
-    updateRadio(radioId, { attachements: [fileResult._id] });
+    updateRadio(radioId, { attachements: [fileResult._id] })
+    .then(response => res.send(response), error => res.send(error));
   });
-  // uploadFile(patient, benificiaire, radioId)
-  //   .then(response => res.send(response), error => res.send(error));
 });
 router.post('/:id', (req, res) => {
   const radio = req.body;

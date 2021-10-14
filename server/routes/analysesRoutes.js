@@ -13,6 +13,27 @@ import {
 } from '../controllers/filesController.js';
 import mongoose from 'mongoose';
 import fs from 'fs';
+import multer from 'multer';
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const benificiaire = req.params.id;
+    if (!fs.existsSync('../patient')) {
+      fs.mkdirSync('../patient');
+    }
+    if (!fs.existsSync('../patient/' + benificiaire)) {
+      fs.mkdirSync('../patient/' + benificiaire);
+    }
+    if (!fs.existsSync('../patient/' + benificiaire + '/analyse')) {
+      fs.mkdirSync('../patient/' + benificiaire + '/analyse');
+    }
+    cb(null, '../patient/' + benificiaire + '/analyse/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+const upload = multer({ storage: storage });
 
 const ObjectId = mongoose.Types.ObjectId;
 const router = express.Router();
@@ -43,34 +64,19 @@ router.post('/benif/:id', (req, res) => {
       .then(response => res.send(response), error => res.send(error));
   }
 });
-router.post('/:analyseId/benif/:id/upload/:name', (request, res) => {
+router.post('/:analyseId/benif/:id/upload/:name', upload.single('file'), (request, res) => {
   const benificiaire = request.params.id;
   const name = request.params.name;
   const analyseId = request.params.analyseId;
-  const chunks = [];
-  if (!fs.existsSync('../patient')) {
-    fs.mkdirSync('../patient');
-  }
-  if (!fs.existsSync('../patient/' + benificiaire)) {
-    fs.mkdirSync('../patient/' + benificiaire);
-  }
-  if (!fs.existsSync('../patient/' + benificiaire + '/analyse')) {
-    fs.mkdirSync('../patient/' + benificiaire + '/analyse');
-  }
-  request.on('data', chunk => chunks.push(chunk));
-  request.on('end', (a, z, e) => {
-    const data = Buffer.concat(chunks);
-    fs.writeFile(`../patient/${benificiaire}/analyse/${name}`, data, 'binary', function(err){});
-  })
   const attachement = {
     name,
+    mimeType: request.file.mimetype,
     path: `patient/${benificiaire}/analyse/${name}`,
   };
   addFile(attachement).then((fileResult) => {
-    updateAnalyse(analyseId, { attachements: [fileResult._id] });
+    updateAnalyse(analyseId, { attachements: [fileResult._id] })
+    .then(response => res.send(response), error => res.send(error));
   });
-  // uploadFile(patient, benificiaire, analyseId)
-  //   .then(response => res.send(response), error => res.send(error));
 });
 router.post('/:id', (req, res) => {
   const analyse = req.body;

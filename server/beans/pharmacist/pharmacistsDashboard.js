@@ -23,7 +23,7 @@ function getCallLogsStatistics(pharmacist, data) {
       deferred.reject(result);
     }, 0);
   } else {
-    let date = new Date();
+    let date = Date.now;
     date = new Date(date.setMonth(date.getMonth() - 1));
     const filter = startDate === undefined ? { pharmacist_id: pharmacistID } : {
       pharmacist_id: pharmacistID,

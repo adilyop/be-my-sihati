@@ -6,6 +6,7 @@ const Schema = mongoose.Schema;
 const filesSchema = new Schema({
   name: String,
   path: String,
+  mimeType: String,
   deleted: { type: Boolean, default: false },
 }, { collection: 'files' });
 

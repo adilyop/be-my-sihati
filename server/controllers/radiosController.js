@@ -25,7 +25,7 @@ function getRadioByFilter(patient, benificiaire) {
   // })
   .populate({
     path: 'attachements',
-    select: 'id name path',
+    select: 'id name path mimeType',
     model: 'files',
   })
   .populate({
@@ -49,8 +49,9 @@ function updateRadio(_id, body) {
     .exec();
 }
 
-function deleteRadio(id) {
-  return Radios.findByIdAndRemove(id)
+function deleteRadio(_id) {
+  const update = { $set: { deleted: true } };
+  return Radios.findOneAndUpdate({ _id }, update)
     .exec();
 }
 function uploadFile(patient, benificiaire, radioId) {

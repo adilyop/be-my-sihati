@@ -11,7 +11,7 @@ const radiosSchema = new Schema({
   laboratory: String,
   date_prevu: String,
   date_rdv: String,
-  date_prise_rdv: { type: Date, default: new Date() },
+  date_prise_rdv: { type: Date, default: Date.now },
   price: String,
   interpretation_medecin: String,
   interpretation_labo: String,

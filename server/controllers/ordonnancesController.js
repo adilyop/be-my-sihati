@@ -25,7 +25,7 @@ function getOrdonnanceByFilter(patient, benificiaire) {
   // })
   .populate({
     path: 'attachements',
-    select: 'id name path',
+    select: 'id name path mimeType',
     model: 'files',
   })
   .populate({
@@ -45,8 +45,9 @@ function updateOrdonnance(_id, body) {
     .exec();
 }
 
-function deleteOrdonnance(id) {
-  return Ordonnances.findByIdAndRemove(id)
+function deleteOrdonnance(_id) {
+  const update = { $set: { deleted: true } };
+  return Ordonnances.findOneAndUpdate({ _id }, update)
     .exec();
 }
 function uploadFile(patient, benificiaire, ordonnanceId) {

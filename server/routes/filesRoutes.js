@@ -1,18 +1,34 @@
 /* eslint-disable new-cap, no-param-reassign */
 import express from 'express';
-import {
-  downloadFile
-} from '../controllers/filesController.js';
 import mongoose from 'mongoose';
+import fs from 'fs';
+import path from 'path';
 
-const ObjectId = mongoose.Types.ObjectId;
+
 const router = express.Router();
-
-router.post('/file/download', (req, res) => {
+const mime = {
+  html: 'text/html',
+  txt: 'text/plain',
+  css: 'text/css',
+  gif: 'image/gif',
+  jpg: 'image/jpeg',
+  png: 'image/png',
+  svg: 'image/svg+xml',
+  js: 'application/javascript'
+};
+router.post('/download', (req, res) => {
   const body = req.body;
-  downloadFile(body)
-    .then(response => res.send(response), error => res.send(error));
-});
+  const pathFile = body.path;
 
+  const path1 = path.join(fs.realpathSync('..'), pathFile);
+  const base64str = base64Encode(path1);
+  res.send(base64str);
+});
+function base64Encode(file) {
+  // read binary data
+  const bitmap = fs.readFileSync(file);
+  // convert binary data to base64 encoded string
+  return new Buffer(bitmap).toString('base64');
+}
 export default router;
 

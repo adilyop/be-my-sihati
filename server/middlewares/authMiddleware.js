@@ -98,7 +98,7 @@ function executeLogin(username, password, cb) {
   getUserByFilter(filter)
     .then((users) => {
       if (users.length !== 0) {
-        const body = { last_login: new Date() };
+        const body = { last_login: Date.now };
         const userID = users[0]._id;
         updateUser(userID, body);
         cb(null, users[0]);

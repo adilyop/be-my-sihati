@@ -22,7 +22,7 @@ function getTraitementByFilter(patient, benificiaire) {
   // })
   .populate({
     path: 'attachements',
-    select: 'id name path',
+    select: 'id name path mimeType',
     model: 'files',
   })
   .populate({
@@ -46,8 +46,9 @@ function updateTraitement(_id, body) {
     .exec();
 }
 
-function deleteTraitement(id) {
-  return Traitements.findByIdAndRemove(id)
+function deleteTraitement(_id) {
+  const update = { $set: { deleted: true } };
+  return Traitements.findOneAndUpdate({ _id }, update)
     .exec();
 }
 function uploadFile(patient, benificiaire, traitementId) {

@@ -20,7 +20,7 @@ function getConsultationByFilter(patient, benificiaire) {
   return Consultations.find(filter)
     .populate({
       path: 'attachements',
-      select: 'id name path',
+      select: 'id name path mimeType',
       model: 'files',
     })
     .populate({
@@ -37,8 +37,9 @@ function updateConsultation(_id, body) {
     .exec();
 }
 
-function deleteConsultation(id) {
-  return Consultations.findByIdAndRemove(id)
+function deleteConsultation(_id) {
+  const update = { $set: { deleted: true } };
+  return Consultations.findOneAndUpdate({ _id }, update)
     .exec();
 }
 

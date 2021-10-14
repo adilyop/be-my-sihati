@@ -25,7 +25,7 @@ function getAnalyseByFilter(patient, benificiaire) {
   // })
   .populate({
     path: 'attachements',
-    select: 'id name path',
+    select: 'id name path mimeType',
     model: 'files',
   })
   .populate({
@@ -49,8 +49,9 @@ function updateAnalyse(_id, body) {
     .exec();
 }
 
-function deleteAnalyse(id) {
-  return Analyses.findByIdAndRemove(id)
+function deleteAnalyse(_id) {
+  const update = { $set: { deleted: true } };
+  return Analyses.findOneAndUpdate({ _id }, update)
     .exec();
 }
 function uploadFile(patient, benificiaire, analyseId) {

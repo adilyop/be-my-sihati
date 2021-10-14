@@ -27,7 +27,7 @@ const traitementsSchema = new Schema({
   traitement_duration: String,
   rest_duration: String,
   subTraitments: [subTraitementSchema],
-  date_prise_rdv: { type: Date, default: new Date() },
+  date_prise_rdv: { type: Date, default: Date.now },
   comment: String,
   comment_personnel_traitment: String,
   interpretation_dr: String,

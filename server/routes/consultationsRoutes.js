@@ -12,6 +12,27 @@ import {
 } from '../controllers/filesController.js';
 import mongoose from 'mongoose';
 import fs from 'fs';
+import multer from 'multer';
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const benificiaire = req.params.id;
+    if (!fs.existsSync('../patient')) {
+      fs.mkdirSync('../patient');
+    }
+    if (!fs.existsSync('../patient/' + benificiaire)) {
+      fs.mkdirSync('../patient/' + benificiaire);
+    }
+    if (!fs.existsSync('../patient/' + benificiaire + '/consultation')) {
+      fs.mkdirSync('../patient/' + benificiaire + '/consultation');
+    }
+    cb(null, '../patient/' + benificiaire + '/consultation/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+const upload = multer({ storage: storage });
 
 const ObjectId = mongoose.Types.ObjectId;
 const router = express.Router();
@@ -53,34 +74,21 @@ router.delete('/:id', (req, res) => {
   deleteConsultation(id)
     .then(response => res.send(response), error => res.send(error));
 });
-router.post('/:consultationId/benif/:id/upload/:name', (request, res) => {
-  const benificiaire = request.params.id;
-  const name = request.params.name;
-  const consultationId = request.params.consultationId;
-  const chunks = [];
-  if (!fs.existsSync('../patient')) {
-    fs.mkdirSync('../patient');
+router.post('/:consultationId/benif/:id/upload/:name', upload.single('file'), (request, res) => {
+  if (request.file) {
+    const benificiaire = request.params.id;
+    const name = request.params.name;
+    const consultationId = request.params.consultationId;
+    const attachement = {
+      name,
+      mimeType: request.file.mimetype,
+      path: `patient/${benificiaire}/consultation/${name}`,
+    };
+    addFile(attachement).then((fileResult) => {
+      updateConsultation(consultationId, { attachements: [fileResult._id] })
+      .then(response => res.send(response), error => res.send(error));
+    });
   }
-  if (!fs.existsSync('../patient/' + benificiaire)) {
-    fs.mkdirSync('../patient/' + benificiaire);
-  }
-  if (!fs.existsSync('../patient/' + benificiaire + '/consultation')) {
-    fs.mkdirSync('../patient/' + benificiaire + '/consultation');
-  }
-  request.on('data', chunk => chunks.push(chunk));
-  request.on('end', (a, z, e) => {
-    const data = Buffer.concat(chunks);
-    fs.writeFile(`../patient/${benificiaire}/consultation/${name}`, data, 'binary', function(err){});
-  })
-  const attachement = {
-    name,
-    path: `patient/${benificiaire}/consultation/${name}`,
-  };
-  addFile(attachement).then((fileResult) => {
-    updateConsultation(consultationId, { attachements: [fileResult._id] });
-  });
-  // uploadFile(patient, benificiaire, analyseId)
-  //   .then(response => res.send(response), error => res.send(error));
 });
 export default router;
 

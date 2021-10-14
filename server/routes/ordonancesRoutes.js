@@ -13,6 +13,27 @@ import {
 } from '../controllers/filesController.js';
 import mongoose from 'mongoose';
 import fs from 'fs';
+import multer from 'multer';
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const benificiaire = req.params.id;
+    if (!fs.existsSync('../patient')) {
+      fs.mkdirSync('../patient');
+    }
+    if (!fs.existsSync('../patient/' + benificiaire)) {
+      fs.mkdirSync('../patient/' + benificiaire);
+    }
+    if (!fs.existsSync('../patient/' + benificiaire + '/ordonnance')) {
+      fs.mkdirSync('../patient/' + benificiaire + '/ordonnance');
+    }
+    cb(null, '../patient/' + benificiaire + '/ordonnance/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+const upload = multer({ storage: storage });
 
 const ObjectId = mongoose.Types.ObjectId;
 const router = express.Router();
@@ -43,34 +64,19 @@ router.post('/benif/:id', (req, res) => {
       .then(response => res.send(response), error => res.send(error));
   }
 });
-router.post('/:ordonnanceId/benif/:id/upload/:name', (request, res) => {
+router.post('/:ordonnanceId/benif/:id/upload/:name', upload.single('file'), (request, res) => {
   const benificiaire = request.params.id;
   const name = request.params.name;
   const ordonnanceId = request.params.ordonnanceId;
-  const chunks = [];
-  if (!fs.existsSync('../patient')) {
-    fs.mkdirSync('../patient');
-  }
-  if (!fs.existsSync('../patient/' + benificiaire)) {
-    fs.mkdirSync('../patient/' + benificiaire);
-  }
-  if (!fs.existsSync('../patient/' + benificiaire + '/ordonnance')) {
-    fs.mkdirSync('../patient/' + benificiaire + '/ordonnance');
-  }
-  request.on('data', chunk => chunks.push(chunk));
-  request.on('end', (a, z, e) => {
-    const data = Buffer.concat(chunks);
-    fs.writeFile(`../patient/${benificiaire}/ordonnance/${name}`, data, 'binary', function(err){});
-  })
   const attachement = {
     name,
+    mimeType: request.file.mimetype,
     path: `patient/${benificiaire}/ordonnance/${name}`,
   };
   addFile(attachement).then((fileResult) => {
-    updateOrdonnance(ordonnanceId, { attachements: [fileResult._id] });
+    updateOrdonnance(ordonnanceId, { attachements: [fileResult._id] })
+    .then(response => res.send(response), error => res.send(error));
   });
-  // uploadFile(patient, benificiaire, ordonnanceId)
-  //   .then(response => res.send(response), error => res.send(error));
 });
 router.post('/:id', (req, res) => {
   const ordonnance = req.body;
