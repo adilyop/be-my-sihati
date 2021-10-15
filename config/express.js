@@ -31,6 +31,7 @@ import {
 import { formatOutput } from '../server/middlewares/outputMiddleware.js';
 import { handleOptions } from '../server/middlewares/inputMiddleware.js';
 
+import {} from 'dotenv/config';
 // const Container = require('../server/lib/di/container.js');
 // const sql = require('mssql');
 // // const cron = require('../server/cron');
@@ -46,7 +47,10 @@ const debug = require('debug')('mysehhatiapi:index');
 mongoose.Promise = Promise;
 
 // connect to mongo db
-const mongoUri = `mongodb://localhost:27017/Limouna`;
+
+const mongoUri = `${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
+console.log('mongoUri ', mongoUri)
+//const mongoUri = `mongodb://localhost:27017/Limouna`;
 mongoose.connect(mongoUri, { server: { socketOptions: { keepAlive: 1 } } });
 mongoose.connection.on('error', () => {
   throw new Error(`unable to connect to database: ${mongoUri}`);
