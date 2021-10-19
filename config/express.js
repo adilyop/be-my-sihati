@@ -64,21 +64,7 @@ if (true) {
 
 // server initialization
 const app = express();
-
-var whitelist = ['https://www.mysihati.com', 'http://www.mysihati.com']
-var corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
-    }
-  }
-}
-
-// Then pass them to cors:
-app.use(cors(corsOptions));
-
+app.use(cors());
 // load services
 // eslint-disable-next-line global-require
 
