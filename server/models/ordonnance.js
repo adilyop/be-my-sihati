@@ -15,6 +15,7 @@ const ordonnancesSchema = new Schema({
   discharge_status: { type: String, default: 'NotScheduled', enum: ['Scheduled', 'NotScheduled'] },
   patient_number: Number,
   deleted: { type: Boolean, default: false },
+  ordonnance_status: { type: String, default: 'Later', enum: ['Done', 'Later', 'InProgress'] },
   attachements: [{ type: Schema.Types.ObjectId, refPath: 'files' }],
 }, { collection: 'ordonnances' });
 

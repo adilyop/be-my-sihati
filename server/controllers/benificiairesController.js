@@ -1,7 +1,8 @@
 /**
  * Created by adil on 18/08/17.
  */
-import { Benificiaires, Consultations, Analyses, Radios, Traitements } from '../models/index.js';
+import { Benificiaires, Consultations,
+  Analyses, Radios, Traitements, Ordonnances } from '../models/index.js';
 
 function addBenificiaire(data) {
   const benificiaire = new Benificiaires(data);
@@ -21,19 +22,27 @@ function getNotifications(benificiaire, patient) {
   const filterRadio = { patient, benificiaire, radio_status: 'Later', deleted: false };
   const filterTraitement = { patient, benificiaire, traitement_status: 'Later', deleted: false };
   const filterTraitementInProgree = { patient, benificiaire, traitement_status: 'InProgress', deleted: false };
+  const filterOrdonnance = { patient, benificiaire, ordonnance_status: 'Later', deleted: false };
+  const filterOrdonnanceInProgree = { patient, benificiaire, ordonnance_status: 'InProgress', deleted: false };
   return Consultations.find(filter).then((consultations) => {
     return Analyses.find(filterAnalyse).then((analyses) => {
       return Radios.find(filterRadio).then((radios) => {
         return Traitements.find(filterTraitement).then((traitement) => {
           return Traitements.find(filterTraitementInProgree).then((traitementInProgress) => {
-            const result = {
-              countConsultation: consultations.length,
-              countAnalyse: analyses.length,
-              countRadio: radios.length,
-              countTraitement: traitement.length,
-              countTraitementInProgress: traitementInProgress.length,
-            };
-            return result;
+            return Ordonnances.find(filterOrdonnance).then((ordonnannce) => {
+              return Ordonnances.find(filterOrdonnanceInProgree).then((ordonnannceInProgress) => {
+                const result = {
+                  countConsultation: consultations.length,
+                  countAnalyse: analyses.length,
+                  countRadio: radios.length,
+                  countTraitement: traitement.length,
+                  countTraitementInProgress: traitementInProgress.length,
+                  countOrdonnance: ordonnannce.length,
+                  countOrdonnanceInProgress: ordonnannceInProgress.length,
+                };
+                return result;
+              });
+            });
           });
         });
       });

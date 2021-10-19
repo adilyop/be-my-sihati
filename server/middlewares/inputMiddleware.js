@@ -10,6 +10,8 @@ function handleOptions(req, res, next) {
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
   res.header('Pragma', 'no-cache');
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With');
   return next();
 }
 
