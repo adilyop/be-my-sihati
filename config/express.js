@@ -95,26 +95,24 @@ import traitementsRoutes from '../server/routes/traitementsRoutes.js';
 import radiosRoutes from '../server/routes/radiosRoutes.js';
 import filesRoutes from '../server/routes/filesRoutes.js';
 
+import keycloak from './keycloak-config.js';
+const resClock = keycloak.initKeycloak();
+app.use(resClock.middleware());
 app.use(logger('dev'));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }));
 app.use(cookieParser());
 app.use(handleOptions);
 
-passport.use(new Strategy(
-  (username, password, done) => {
-    executeLogin(username, password, done);
-  }
-));
 // app.use('/sign-up', authRoutes);
-app.post('/login', passport.initialize(), passport.authenticate(
-  'local', {
-    session: false,
-    scope: []
-  }), serializeClient, generateToken, respond);
+// app.post('/login', passport.initialize(), passport.authenticate(
+//   'local', {
+//     session: false,
+//     scope: []
+//   }), serializeClient, generateToken, respond);
 
 app.use('/medecins', medecinsRoutes);
-app.use('/patients',checkPatientsPermission, patientsRoutes);
+app.use('/patients',resClock.protect(), patientsRoutes);
 app.use('/pharmacists', pharmacistsRoutes);
   // app.use('/doctors', doctorsRoutes);
 app.use('/users', usersRoutes);
@@ -124,14 +122,13 @@ app.post('/refresh',
   respondRefresh
 );
 app.post('/sign-up', signUp);
-app.use(verifyToken);
-app.use('/benificiares', checkPatientsPermission, benificiairesRoutes);
-app.use('/consultation', checkPatientsPermission, consultationsRoutes);
-app.use('/ordonnances', checkPatientsPermission, ordonnancesRoutes);
-app.use('/analyses', checkPatientsPermission, analysesRoutes);
-app.use('/traitements', checkPatientsPermission, traitementsRoutes);
-app.use('/radios', checkPatientsPermission, radiosRoutes);
-app.use('/files', checkPatientsPermission, filesRoutes);
+app.use('/benificiares', resClock.protect(), benificiairesRoutes);
+app.use('/consultation', resClock.protect(), consultationsRoutes);
+app.use('/ordonnances', resClock.protect(), ordonnancesRoutes);
+app.use('/analyses', resClock.protect(), analysesRoutes);
+app.use('/traitements', resClock.protect(), traitementsRoutes);
+app.use('/radios', resClock.protect(), radiosRoutes);
+app.use('/files', resClock.protect(), filesRoutes);
 app.use(formatOutput);
 
 // catch 404 and forward to error handler

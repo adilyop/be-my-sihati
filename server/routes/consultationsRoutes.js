@@ -39,18 +39,18 @@ const router = express.Router();
 
 router.get('/benif/:id', (req, res) => {
   const benif = ObjectId(req.params.id);
-  const patient = req.user._id;
+  const patient = req.query.patient;
   getConsultationByFilter(patient, benif)
     .then(response => res.send(response), error => res.send(error));
 });
 router.get('/:id', (req, res) => {
   const _id = ObjectId(req.params.id);
-  const patientId = ObjectId(req.user._id);
+  const patientId = ObjectId(req.query.patient);
   getConsultation(_id, patientId)
     .then(response => res.send(response), error => res.send(error));
 });
 router.post('/benif/:id', (req, res) => {
-  const patient = req.user._id;
+  const patient = req.query.patient;
   const benificiaire = req.params.id;
   const consultation = req.body;
   consultation.benificiaire = benificiaire;

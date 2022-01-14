@@ -14,23 +14,23 @@ const ObjectId = mongoose.Types.ObjectId;
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  getBenificiaireByFilter({ patient: req.user._id, deleted: false }, {})
+  getBenificiaireByFilter({ patient: req.query.patient, deleted: false }, {})
     .then(response => res.send(response), error => res.send(error));
 });
 router.get('/:id', (req, res) => {
   const _id = ObjectId(req.params.id);
-  const patientId = ObjectId(req.user._id);
+  const patientId = ObjectId(req.query.patient);
   getBenificiaire(_id, patientId)
     .then(response => res.send(response), error => res.send(error));
 });
 router.get('/:id/notifications', (req, res) => {
   const _id = ObjectId(req.params.id);
-  const patientId = ObjectId(req.user._id);
+  const patientId = ObjectId(req.query.patient);
   getNotifications(_id, patientId)
     .then(response => res.send(response), error => res.send(error));
 });
 router.post('/', (req, res) => {
-  const patient = req.user._id;
+  const patient = req.query.patient;
   const benificiaire = req.body;
   benificiaire.patient = patient;
   if ('_id' in benificiaire) {

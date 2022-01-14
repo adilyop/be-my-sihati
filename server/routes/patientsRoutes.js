@@ -16,6 +16,11 @@ router.get('/', (req, res) => {
   getAllPatients({}, {})
     .then(response => res.send(response), error => res.send(error));
 });
+router.get('/filter', (req, res) => {
+  const filter = req.query;
+  getAllPatients(filter, {})
+    .then(response => res.send(response), error => res.send(error));
+});
 router.get('/:id', (req, res) => {
   const id = req.params.id;
   getPatient(id)

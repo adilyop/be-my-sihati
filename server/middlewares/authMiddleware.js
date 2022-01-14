@@ -26,7 +26,7 @@ const tokenTime = 120 * 60;
 
 function generateToken(req, res, next) {
   const json = {
-    _id: req.user._id,
+    _id: req.query.patient,
     kind: req.user.kind,
     item: req.user.item._id
   };
@@ -80,7 +80,7 @@ function respondRefresh(req, res) {
 function respond(req, res) {
   console.log('req.user respond  ', req.user)
   res.status(200).send({
-    _id: req.user._id,
+    _id: req.query.patient,
     last_login: req.user.last_login,
     user_type: req.user,
     token: req.token,

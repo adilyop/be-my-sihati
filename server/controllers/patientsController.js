@@ -18,110 +18,16 @@ Grid.mongo = mongoose.mongo;
 function getAllPatients(filter, pagination) {
   let skip = 0;
   let limit = 10;
-  const query = {};
+  const query = filter;
   if (pagination !== undefined && 'skip' in pagination && !isNaN(pagination.skip)) { skip = Number(pagination.skip); }
   if (pagination !== undefined && 'limit' in pagination && !isNaN(pagination.skip)) { limit = Number(pagination.limit); }
-  if ('sub_facility_id' in filter && ObjectId.isValid(filter.sub_facility_id)) { query.sub_facility_id = ObjectId(filter.sub_facility_id); }
   query.deleted = false;
   return Patients.aggregate([
     {
       $match: query,
     },
-    { $sort: { _id: -1 } },
-    {
-      $lookup: {
-        from: 'calllogs',
-        localField: '_id',
-        foreignField: 'patient_id',
-        as: 'calllogs',
-      },
-    },
-    {
-      $lookup: {
-        from: 'queues',
-        localField: '_id',
-        foreignField: 'patient_id',
-        as: 'queues',
-      },
-    },
-    {
-      $project: {
-        _id: 1,
-        first_name: 1,
-        last_name: 1,
-        phone_number: 1,
-        email_address: 1,
-        sub_facility_id: 1,
-        deleted: 1,
-        ssn: 1,
-        patient_number: 1,
-        resources: {
-          $filter: {
-            input: '$resources',
-            as: 'resource',
-            cond: {
-              $eq: ['$$resource.deleted', false]
-            }
-          }
-        },
-        discharge_status: 1,
-        time_zone: 1,
-        callLogs: { start: '$calllogs.end_date', end: '$calllogs.start_date' },
-        queues: {
-          $filter: {
-            input: '$queues',
-            as: 'queue',
-            cond: {
-              $eq: ['$$queue.deleted', false]
-            }
-          }
-        },
-      },
-    },
-    {
-      $group: {
-        _id: null,
-        docs: { $push: '$$ROOT' },
-        count: { $sum: 1 }
-      }
-    },
-    {
-      $project: {
-        _id: 0,
-        count: 1,
-        docs: {
-          $slice: [
-            '$docs', skip, limit
-          ]
-        }
-      }
-    }
   ]).then((patientDocs) => {
-    if (patientDocs.length === 0) return Promise.resolve({ docs: [], count: 0 });
-    const patientDoc = patientDocs[0];
-    const patientsDoc = patientDoc.docs;
-    const totalCount = patientDoc.count;
-    return Patients.populate(patientsDoc, [{ path: 'sub_facility_id' }])
-      .then((patients) => {
-        if (patients.length === 0) return Promise.resolve({ docs: [], count: 0 });
-        const result = [];
-        for (let i = 0; i < patients.length; i += 1) {
-          let duration = 0;
-          for (let j = 0; j < patients[i].callLogs.start.length; j += 1) {
-            const startDate = new Date(patients[i].callLogs.start[j]);
-            const endDate = new Date(patients[i].callLogs.end[j]);
-            const tempDuration = (startDate.getTime() - endDate.getTime()) / 1000;
-            duration += tempDuration;
-          }
-          const date = new Date(null);
-          date.setSeconds(duration);
-          const time = date.toISOString().substr(11, 8);
-          patients[i].duration = time;
-          delete patients[i].callLogs;
-          result.push(patients[i]);
-        }
-        return Promise.resolve({ docs: patients, count: totalCount });
-      });
+    return patientDocs;
   }).catch(err => Promise.reject(err));
 }
 function searchPatients(filter, pagination) {
