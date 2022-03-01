@@ -94,6 +94,8 @@ import analysesRoutes from '../server/routes/analysesRoutes.js';
 import traitementsRoutes from '../server/routes/traitementsRoutes.js';
 import radiosRoutes from '../server/routes/radiosRoutes.js';
 import filesRoutes from '../server/routes/filesRoutes.js';
+import maladiPersosRoutes from '../server/routes/maladiPersoRoutes.js';
+import maladiOthersRoutes from '../server/routes/maladiOtherRoutes.js';
 
 import keycloak from './keycloak-config.js';
 const resClock = keycloak.initKeycloak();
@@ -128,6 +130,8 @@ app.use('/ordonnances', resClock.protect(), ordonnancesRoutes);
 app.use('/analyses', resClock.protect(), analysesRoutes);
 app.use('/traitements', resClock.protect(), traitementsRoutes);
 app.use('/radios', resClock.protect(), radiosRoutes);
+app.use('/maladi-perso', resClock.protect(), maladiPersosRoutes);
+app.use('/maladi-other', resClock.protect(), maladiOthersRoutes);
 app.use('/files', resClock.protect(), filesRoutes);
 app.use(formatOutput);
 

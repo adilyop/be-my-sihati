@@ -13,6 +13,8 @@ import Files from './file.js';
 import Analyses from './analyse.js';
 import Radios from './radio.js';
 import Traitements from './traitement.js';
+import MaladiPersos from './maladiPerso.js';
+import MaladiOthers from './maladiOther.js';
 
 export {
   Patients,
@@ -26,5 +28,7 @@ export {
   Analyses,
   Radios,
   Files,
-  Traitements
+  Traitements,
+  MaladiPersos,
+  MaladiOthers
 };

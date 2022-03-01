@@ -14,7 +14,13 @@ function addBenificiaire(data) {
 
 function getBenificiaire(_id, patient) {
   const filter = { _id, patient };
-  return Benificiaires.find(filter);
+  return Benificiaires.find(filter)
+  .populate({
+    path: 'medecin',
+    select: 'id speciality first_name last_name phone_number email_address adresse',
+    model: 'medecins'
+  })
+  .exec();
 }
 function getNotifications(benificiaire, patient) {
   const filter = { patient, benificiaire, consultation_status: 'Later', deleted: false };
