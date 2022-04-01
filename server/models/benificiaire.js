@@ -1,9 +1,11 @@
 /* eslint-disable new-cap, no-param-reassign */
 
 import mongoose from 'mongoose';
+import uuid from 'uuid';
 
 const Schema = mongoose.Schema;
 const benificiairesSchema = new Schema({
+  uuid: { type: String, default: uuid.v4() },
   patient: { type: Schema.Types.ObjectId, refPath: 'benificiaires' },
   first_name: String,
   last_name: String,

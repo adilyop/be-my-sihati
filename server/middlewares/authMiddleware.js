@@ -53,7 +53,6 @@ function checkRefreshToken(req, res, next) {
 function serializeClient(req, res, next) {
   const refreshToken = uuid.v4();
   req.user = req.user.user_type;
-  console.log('req.user serializeClient ', req.user)
   const client = {
     user: {
       kind: req.user.kind,

@@ -6,11 +6,14 @@
 import mongoose from 'mongoose';
 import stream from 'stream';
 import phone from 'phone';
-import { Patients } from '../models/index.js';
-
-const ObjectId = mongoose.Types.ObjectId;
 import Grid from 'gridfs-stream';
 import Q from 'q';
+import { Patients } from '../models/index.js';
+import {
+  addBenificiaire,
+} from '../controllers/benificiairesController.js';
+
+const ObjectId = mongoose.Types.ObjectId;
 
 const conn = mongoose.connection;
 Grid.mongo = mongoose.mongo;
@@ -225,6 +228,9 @@ function addPatient(data) {
   const filter = {
     _id: patient._id
   };
+  const benif = data;
+  benif.patient = patient._id;
+  addBenificiaire(benif);
   return Patients.findOneAndUpdate(filter, patient, { new: true, upsert: true })
     .exec();
 }
