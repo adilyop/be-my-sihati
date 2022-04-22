@@ -10,6 +10,7 @@ const consultationsSchema = new Schema({
   consultation_status: { type: String, default: 'Later', enum: ['Done', 'Later', 'InProgress'] },
   consultation_name: String,
   consultation_desc: String,
+  consultation_maladie: String,
   date_consultation: String,
   date_prise_rdv: { type: Date, default: Date.now },
   date_rdv: String,

@@ -5,7 +5,7 @@ import uuid from 'uuid';
 
 const Schema = mongoose.Schema;
 const benificiairesSchema = new Schema({
-  uuid: { type: String, default: uuid.v4() },
+  uuid: { type: String, default: `MA-${uuid.v4().substring(0, 13)}` },
   patient: { type: Schema.Types.ObjectId, refPath: 'benificiaires' },
   first_name: String,
   last_name: String,
