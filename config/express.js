@@ -31,7 +31,7 @@ import {
 import { formatOutput } from '../server/middlewares/outputMiddleware.js';
 import { handleOptions } from '../server/middlewares/inputMiddleware.js';
 
-import {} from 'dotenv/config';
+import { } from 'dotenv/config';
 // const Container = require('../server/lib/di/container.js');
 // const sql = require('mssql');
 // // const cron = require('../server/cron');
@@ -96,6 +96,7 @@ import radiosRoutes from '../server/routes/radiosRoutes.js';
 import filesRoutes from '../server/routes/filesRoutes.js';
 import maladiPersosRoutes from '../server/routes/maladiPersoRoutes.js';
 import maladiOthersRoutes from '../server/routes/maladiOtherRoutes.js';
+import mesuresRoutes from '../server/routes/mesuresRoutes.js';
 
 import keycloak from './keycloak-config.js';
 const resClock = keycloak.initKeycloak();
@@ -114,9 +115,9 @@ app.use(handleOptions);
 //   }), serializeClient, generateToken, respond);
 
 app.use('/medecins', medecinsRoutes);
-app.use('/patients',resClock.protect(), patientsRoutes);
+app.use('/patients', resClock.protect(), patientsRoutes);
 app.use('/pharmacists', pharmacistsRoutes);
-  // app.use('/doctors', doctorsRoutes);
+// app.use('/doctors', doctorsRoutes);
 app.use('/users', usersRoutes);
 app.post('/refresh',
   checkRefreshToken,
@@ -132,6 +133,7 @@ app.use('/traitements', resClock.protect(), traitementsRoutes);
 app.use('/radios', resClock.protect(), radiosRoutes);
 app.use('/maladi-perso', resClock.protect(), maladiPersosRoutes);
 app.use('/maladi-other', resClock.protect(), maladiOthersRoutes);
+app.use('/mesures', resClock.protect(), mesuresRoutes);
 app.use('/files', resClock.protect(), filesRoutes);
 app.use(formatOutput);
 
@@ -151,4 +153,4 @@ app.use((err, req, res) => {
   res.send({});
 });
 
-export {server};
+export { server };
