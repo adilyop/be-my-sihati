@@ -35,7 +35,6 @@ function getMaladiOtherByFilter(benificiaire) {
 function updateMaladiOther(_id, body) {
   const update = { $set: body };
 
-  console.log('update ', update)
   return MaladiOthers.findOneAndUpdate({ _id }, update)
     .exec();
 }

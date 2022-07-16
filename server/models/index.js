@@ -16,6 +16,7 @@ import Traitements from './traitement.js';
 import MaladiPersos from './maladiPerso.js';
 import MaladiOthers from './maladiOther.js';
 import Mesures from './mesure.js';
+import DocAdministratifs from './docAdministratif.js';
 
 export {
   Patients,
@@ -32,5 +33,6 @@ export {
   Traitements,
   MaladiPersos,
   MaladiOthers,
-  Mesures
+  Mesures,
+  DocAdministratifs
 };
